@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neeks's List - 300 Things to Do Before I Die</title>
+    <title>Rob's List - 300 Things to Do Before I Die</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -103,12 +103,12 @@
 
         .add-input:focus {
             outline: none;
-            border-color: #f5576c;
+            border-color: #d4af37;
         }
 
         .add-btn {
             padding: 12px 20px;
-            background: #f5576c;
+            background: #d4af37;
             color: white;
             border: none;
             border-radius: 8px;
@@ -118,7 +118,7 @@
         }
 
         .add-btn:hover {
-            background: #e04758;
+            background: #b8941f;
         }
 
         .items-list {
@@ -180,30 +180,29 @@
             font-style: italic;
         }
 
-        /* Category colors */
-        .money { border-color: #2ecc71; }
-        .money .category-header { border-color: #2ecc71; }
+        .money { border-color: #d4af37; }
+        .money .category-header { border-color: #d4af37; }
         
-        .family { border-color: #e74c3c; }
-        .family .category-header { border-color: #e74c3c; }
+        .family { border-color: #1e3c72; }
+        .family .category-header { border-color: #1e3c72; }
         
         .travel { border-color: #3498db; }
         .travel .category-header { border-color: #3498db; }
         
-        .career { border-color: #f39c12; }
-        .career .category-header { border-color: #f39c12; }
+        .career { border-color: #d4af37; }
+        .career .category-header { border-color: #d4af37; }
         
-        .social { border-color: #9b59b6; }
-        .social .category-header { border-color: #9b59b6; }
+        .social { border-color: #2a5298; }
+        .social .category-header { border-color: #2a5298; }
         
         .health { border-color: #1abc9c; }
         .health .category-header { border-color: #1abc9c; }
         
-        .personal { border-color: #e67e22; }
-        .personal .category-header { border-color: #e67e22; }
+        .personal { border-color: #d4af37; }
+        .personal .category-header { border-color: #d4af37; }
         
-        .kids { border-color: #ff6b9d; }
-        .kids .category-header { border-color: #ff6b9d; }
+        .kids { border-color: #1e3c72; }
+        .kids .category-header { border-color: #1e3c72; }
 
         ::-webkit-scrollbar {
             width: 8px;
@@ -222,54 +221,78 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            padding: 50px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Neeks's List</h1>
+            <h1>Rob's List</h1>
             <div class="total-count">Total: <span id="totalCount">0</span> / 300</div>
         </header>
 
-        <div class="categories-grid" id="categoriesGrid"></div>
+        <div id="loading" class="loading">Loading...</div>
+        <div class="categories-grid" id="categoriesGrid" style="display: none;"></div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXFoMtoW3NH10uNyvZgQHtT2QZvaPlIbI",
+            authDomain: "bucket-lists-13cd9.firebaseapp.com",
+            projectId: "bucket-lists-13cd9",
+            storageBucket: "bucket-lists-13cd9.firebasestorage.app",
+            messagingSenderId: "813283985120",
+            appId: "1:813283985120:web:672de89a277b350cf47285"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const categories = [
-            { id: 'money', name: 'Money & Assets', icon: '💰', color: '#2ecc71' },
-            { id: 'family', name: 'Family & Relationships', icon: '❤️', color: '#e74c3c' },
-            { id: 'travel', name: 'Travel & Explore', icon: '✈️', color: '#3498db' },
-            { id: 'career', name: 'Career & Business', icon: '💼', color: '#f39c12' },
-            { id: 'social', name: 'Social & Community', icon: '🤝', color: '#9b59b6' },
-            { id: 'health', name: 'Health & Fitness', icon: '💪', color: '#1abc9c' },
-            { id: 'personal', name: 'Personal Development', icon: '📚', color: '#e67e22' },
-            { id: 'kids', name: 'Kids', icon: '👶', color: '#ff6b9d' }
+            { id: 'money', name: 'Money & Assets', icon: '💰' },
+            { id: 'family', name: 'Family & Relationships', icon: '❤️' },
+            { id: 'travel', name: 'Travel & Explore', icon: '✈️' },
+            { id: 'career', name: 'Career & Business', icon: '💼' },
+            { id: 'social', name: 'Social & Community', icon: '🤝' },
+            { id: 'health', name: 'Health & Fitness', icon: '💪' },
+            { id: 'personal', name: 'Personal Development', icon: '📚' },
+            { id: 'kids', name: 'Kids', icon: '👶' }
         ];
 
         let bucketList = {};
 
-        // Initialize storage with unique keys for Neeks
         async function init() {
-            try {
-                for (const cat of categories) {
-                    const result = await window.storage.get(`neeks-bucket-${cat.id}`);
-                    bucketList[cat.id] = result ? JSON.parse(result.value) : [];
-                }
-            } catch (error) {
-                categories.forEach(cat => {
+            for (const cat of categories) {
+                bucketList[cat.id] = [];
+                
+                const querySnapshot = await getDocs(collection(db, `rob-${cat.id}`));
+                querySnapshot.forEach((doc) => {
+                    bucketList[cat.id].push({ id: doc.id, ...doc.data() });
+                });
+
+                onSnapshot(collection(db, `rob-${cat.id}`), (snapshot) => {
                     bucketList[cat.id] = [];
+                    snapshot.forEach((doc) => {
+                        bucketList[cat.id].push({ id: doc.id, ...doc.data() });
+                    });
+                    renderCategories();
+                    updateTotalCount();
                 });
             }
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('categoriesGrid').style.display = 'grid';
             renderCategories();
             updateTotalCount();
-        }
-
-        async function saveCategory(categoryId) {
-            try {
-                await window.storage.set(`neeks-bucket-${categoryId}`, JSON.stringify(bucketList[categoryId]));
-            } catch (error) {
-                console.error('Error saving data:', error);
-            }
         }
 
         function renderCategories() {
@@ -288,8 +311,8 @@
                                class="add-input" 
                                placeholder="Add new item..." 
                                id="input-${cat.id}"
-                               onkeypress="handleKeyPress(event, '${cat.id}')">
-                        <button class="add-btn" onclick="addItem('${cat.id}')">+</button>
+                               onkeypress="if(event.key==='Enter') window.addItem('${cat.id}')">
+                        <button class="add-btn" onclick="window.addItem('${cat.id}')">+</button>
                     </div>
                     <ul class="items-list" id="list-${cat.id}">
                         ${renderItems(cat.id)}
@@ -299,66 +322,53 @@
         }
 
         function renderItems(categoryId) {
-            const items = bucketList[categoryId];
+            const items = bucketList[categoryId].sort((a, b) => a.addedAt - b.addedAt);
             if (items.length === 0) {
                 return '<div class="empty-state">No items yet. Start adding your goals!</div>';
             }
-            return items.map((item, index) => `
+            return items.map((item) => `
                 <li class="item ${item.completed ? 'completed' : ''}">
                     <input type="checkbox" 
                            class="item-checkbox" 
                            ${item.completed ? 'checked' : ''}
-                           onchange="toggleComplete('${categoryId}', ${index})">
+                           onchange="window.toggleComplete('${categoryId}', '${item.id}')">
                     <span class="item-text">${item.text}</span>
-                    <button class="delete-btn" onclick="deleteItem('${categoryId}', ${index})">×</button>
+                    <button class="delete-btn" onclick="window.deleteItem('${categoryId}', '${item.id}')">×</button>
                 </li>
             `).join('');
         }
 
-        function handleKeyPress(event, categoryId) {
-            if (event.key === 'Enter') {
-                addItem(categoryId);
-            }
-        }
-
-        async function addItem(categoryId) {
+        window.addItem = async function(categoryId) {
             const input = document.getElementById(`input-${categoryId}`);
             const text = input.value.trim();
             
             if (text === '') return;
 
-            bucketList[categoryId].push({
+            const newItem = {
                 text: text,
                 completed: false,
-                addedAt: new Date().toISOString()
-            });
+                addedAt: Date.now()
+            };
 
-            await saveCategory(categoryId);
+            const docRef = doc(collection(db, `rob-${categoryId}`));
+            await setDoc(docRef, newItem);
             
             input.value = '';
-            document.getElementById(`list-${categoryId}`).innerHTML = renderItems(categoryId);
-            updateCategoryCount(categoryId);
-            updateTotalCount();
-        }
+        };
 
-        async function deleteItem(categoryId, index) {
-            bucketList[categoryId].splice(index, 1);
-            await saveCategory(categoryId);
-            document.getElementById(`list-${categoryId}`).innerHTML = renderItems(categoryId);
-            updateCategoryCount(categoryId);
-            updateTotalCount();
-        }
+        window.deleteItem = async function(categoryId, itemId) {
+            await deleteDoc(doc(db, `rob-${categoryId}`, itemId));
+        };
 
-        async function toggleComplete(categoryId, index) {
-            bucketList[categoryId][index].completed = !bucketList[categoryId][index].completed;
-            await saveCategory(categoryId);
-            document.getElementById(`list-${categoryId}`).innerHTML = renderItems(categoryId);
-        }
-
-        function updateCategoryCount(categoryId) {
-            const card = document.querySelector(`.${categoryId} .category-count`);
-            card.textContent = `${bucketList[categoryId].length} items`;
-        }
+        window.toggleComplete = async function(categoryId, itemId) {
+            const item = bucketList[categoryId].find(i => i.id === itemId);
+            if (item) {
+                await setDoc(doc(db, `rob-${categoryId}`, itemId), {
+                    ...item,
+                    completed: !item.completed
+                });
+            }
+        };
 
         function updateTotalCount() {
             const total = Object.values(bucketList).reduce((sum, items) => sum + items.length, 0);
