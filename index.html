@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rob's List - 300 Things to Do Before I Die</title>
+    <title>Neeks's List - 300 Things to Do Before I Die</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -103,12 +103,12 @@
 
         .add-input:focus {
             outline: none;
-            border-color: #d4af37;
+            border-color: #ff6b9d;
         }
 
         .add-btn {
             padding: 12px 20px;
-            background: #d4af37;
+            background: #ff6b9d;
             color: white;
             border: none;
             border-radius: 8px;
@@ -118,7 +118,7 @@
         }
 
         .add-btn:hover {
-            background: #b8941f;
+            background: #e55a8a;
         }
 
         .items-list {
@@ -180,29 +180,29 @@
             font-style: italic;
         }
 
-        .money { border-color: #d4af37; }
-        .money .category-header { border-color: #d4af37; }
+        .money { border-color: #ff6b9d; }
+        .money .category-header { border-color: #ff6b9d; }
         
-        .family { border-color: #1e3c72; }
-        .family .category-header { border-color: #1e3c72; }
+        .family { border-color: #c44569; }
+        .family .category-header { border-color: #c44569; }
         
         .travel { border-color: #3498db; }
         .travel .category-header { border-color: #3498db; }
         
-        .career { border-color: #d4af37; }
-        .career .category-header { border-color: #d4af37; }
+        .career { border-color: #ff6b9d; }
+        .career .category-header { border-color: #ff6b9d; }
         
-        .social { border-color: #2a5298; }
-        .social .category-header { border-color: #2a5298; }
+        .social { border-color: #c44569; }
+        .social .category-header { border-color: #c44569; }
         
         .health { border-color: #1abc9c; }
         .health .category-header { border-color: #1abc9c; }
         
-        .personal { border-color: #d4af37; }
-        .personal .category-header { border-color: #d4af37; }
+        .personal { border-color: #ff6b9d; }
+        .personal .category-header { border-color: #ff6b9d; }
         
-        .kids { border-color: #1e3c72; }
-        .kids .category-header { border-color: #1e3c72; }
+        .kids { border-color: #c44569; }
+        .kids .category-header { border-color: #c44569; }
 
         ::-webkit-scrollbar {
             width: 8px;
@@ -233,7 +233,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Rob's List</h1>
+            <h1>Neeks's List</h1>
             <div class="total-count">Total: <span id="totalCount">0</span> / 300</div>
         </header>
 
@@ -274,12 +274,12 @@
             for (const cat of categories) {
                 bucketList[cat.id] = [];
                 
-                const querySnapshot = await getDocs(collection(db, `rob-${cat.id}`));
+                const querySnapshot = await getDocs(collection(db, `neeks-${cat.id}`));
                 querySnapshot.forEach((doc) => {
                     bucketList[cat.id].push({ id: doc.id, ...doc.data() });
                 });
 
-                onSnapshot(collection(db, `rob-${cat.id}`), (snapshot) => {
+                onSnapshot(collection(db, `neeks-${cat.id}`), (snapshot) => {
                     bucketList[cat.id] = [];
                     snapshot.forEach((doc) => {
                         bucketList[cat.id].push({ id: doc.id, ...doc.data() });
@@ -350,20 +350,20 @@
                 addedAt: Date.now()
             };
 
-            const docRef = doc(collection(db, `rob-${categoryId}`));
+            const docRef = doc(collection(db, `neeks-${categoryId}`));
             await setDoc(docRef, newItem);
             
             input.value = '';
         };
 
         window.deleteItem = async function(categoryId, itemId) {
-            await deleteDoc(doc(db, `rob-${categoryId}`, itemId));
+            await deleteDoc(doc(db, `neeks-${categoryId}`, itemId));
         };
 
         window.toggleComplete = async function(categoryId, itemId) {
             const item = bucketList[categoryId].find(i => i.id === itemId);
             if (item) {
-                await setDoc(doc(db, `rob-${categoryId}`, itemId), {
+                await setDoc(doc(db, `neeks-${categoryId}`, itemId), {
                     ...item,
                     completed: !item.completed
                 });
